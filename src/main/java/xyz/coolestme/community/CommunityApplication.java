@@ -11,3 +11,10 @@ public class CommunityApplication {
     }
 
 }
+/*
+* git status 查看状态
+* git add .
+* git commit -m "add"
+* git push
+*
+* */
