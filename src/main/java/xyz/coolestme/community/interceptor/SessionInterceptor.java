@@ -6,10 +6,12 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import xyz.coolestme.community.mapper.UserMapper;
 import xyz.coolestme.community.model.User;
+import xyz.coolestme.community.model.UserExample;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @Service
 public class SessionInterceptor implements HandlerInterceptor {
@@ -28,10 +30,13 @@ public class SessionInterceptor implements HandlerInterceptor {
                     String token = cookie.getValue();
                     //System.out.println("get cookie:" + token);
                     //token = "123";
-                    User user = userMapper.findByToken(token);
+                    UserExample userExample = new UserExample();
+                    userExample.createCriteria().andTokenEqualTo(token);
+                    List<User> users = userMapper.selectByExample(userExample);
+//                    User user = userMapper.findByToken(token);
                     //System.out.println("get select:" + user.getToken());
-                    if (user != null){
-                        request.getSession().setAttribute("user",user);
+                    if (users.size() != 0){
+                        request.getSession().setAttribute("user",users.get(0));
                         //System.out.println("interceptor:" + token);
                     }
                 break;
