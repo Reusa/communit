@@ -10,5 +10,5 @@ import java.util.List;
 public interface QuestionExtMapper {
 
     int incView(Question question);
-
+    int inCommentCount(Question question);
 }

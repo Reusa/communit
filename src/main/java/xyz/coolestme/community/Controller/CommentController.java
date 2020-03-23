@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import xyz.coolestme.community.dto.CommentDTO;
 import xyz.coolestme.community.dto.ResultDTO;
+import xyz.coolestme.community.exception.CustomizeErrorCode;
 import xyz.coolestme.community.mapper.CommentMapper;
 import xyz.coolestme.community.model.Comment;
 import xyz.coolestme.community.model.User;
@@ -25,7 +26,7 @@ public class CommentController {
     public Object post(@RequestBody CommentDTO commentDTO, HttpServletRequest request){
         User user = (User) request.getSession().getAttribute("user");
         if (user == null){
-            return ResultDTO.errorOf(2002,"请先登陆再进行评论");
+            return ResultDTO.errorOf(CustomizeErrorCode.NO_LOGIN);
         }
 
         Comment comment = new Comment();
@@ -37,8 +38,6 @@ public class CommentController {
         comment.setCommentator(user.getId());
         comment.setLikeCount(0L);
         commentService.insert(comment);
-        Map<Object,Object> map = new HashMap<>();
-        map.put("message","成功");
-        return map;
+        return ResultDTO.okOf();
     }
 }
