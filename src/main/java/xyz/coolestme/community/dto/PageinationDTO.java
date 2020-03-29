@@ -5,8 +5,8 @@ import xyz.coolestme.community.model.Question;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PageinationDTO {
-    private List<QuestionDTO> questions;
+public class PageinationDTO<T> {
+    private List<T> data;
     private boolean hasPrevious;
     private boolean hasFirstPage;
     private boolean showNest;
@@ -71,12 +71,12 @@ public class PageinationDTO {
         this.hasPrevious = hasPrevious;
     }
 
-    public List<QuestionDTO> getQuestions() {
-        return questions;
+    public List<T> getData() {
+        return data;
     }
 
-    public void setQuestions(List<QuestionDTO> questions) {
-        this.questions = questions;
+    public void setData(List<T> data) {
+        this.data = data;
     }
 
     public void setPageination(Integer totalCount, Integer page, Integer size) {

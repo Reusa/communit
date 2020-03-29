@@ -11,6 +11,11 @@
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="/css/community.css">
+    <link rel="stylesheet" href="/css/editormd.preview.min.css">
+    <link rel="stylesheet" href="/css/editormd.min.css">
+    <script src="/js/editormd.min.js" type="application/javascript"></script>
+    <script src="/js/lib/marked.min.js"></script>
+    <script src="/js/lib/prettify.min.js"></script>
 </head>
 <body>
 <div th:insert="~{navigation :: nav}"></div>
@@ -19,14 +24,22 @@
         <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <h4 class="question_title"><span th:text="${question.title}"></span></h4>
-                <span th:text="${question.description}"></span> <br>
+                <!--<span th:text="${question.description}"></span> <br>-->
                 <span class="text-desc">
                 作者：<span th:text="${question.user.name}"></span> |
                 发布时间：<span th:text="${#dates.format(question.gmtCreate,'yyyy-MM-dd HH:mm')}"></span> |
                 阅读数：<span th:text="${question.viewCount}"></span>
             </span>
                 <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:text="${question.description}"></div>
+                <!--内容-->
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="question-view">
+                    <textarea style="display: none" th:text="${question.description}"></textarea>
+                </div>
+                <script type="text/javascript">
+                    $(function(){
+                       editormd.markdownToHTML("question-view",{});
+                    });
+                </script>
                 <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <!--标签-->
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -43,6 +56,7 @@
                         <span class="glyphicon glyphicon-pencil" aria-hidden="true">编辑</span>
                     </a>
                 </div>
+                <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             </div>
 
             <!--评论-->
@@ -87,12 +101,12 @@
                 <div class="media">
                     <div class="media-left">
                         <a href="#">
-                            <img class="media-object img-circle" th:src="${question.user.avatarUrl}">
+                            <img class="media-object img-circle" th:src="${session.user.avatarUrl}">
                         </a>
                     </div>
                     <div class="media-body">
                         <h5 class="media-heading">
-                            <span th:text="${question.user.name}"></span>
+                            <span th:text="${session.user.name}"></span>
                         </h5>
                     </div>
                 </div>

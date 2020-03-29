@@ -30,27 +30,12 @@ public class IndexController {
     public String index(HttpServletRequest request,
                         Model model,
                         @RequestParam(name = "page",defaultValue = "1") Integer page,
-                        @RequestParam(name = "size",defaultValue = "5") Integer size){
-/*
-        Cookie[] cookies = request.getCookies();
-        //if (cookies != null &&cookies.length!= 0)
-        for (Cookie cookie : cookies){
-            if (cookie.getName().equals("token")){
-                String token = cookie.getValue();
-                System.out.println(token);
-                //token = "123";
-                User user = userMapper.findByToken(token);
-                if (user != null){
-                    request.getSession().setAttribute("user",user);
-                    System.out.println(token);
-                }
-                break;
-            }
-        }
-*/
+                        @RequestParam(name = "size",defaultValue = "5") Integer size,
+                        @RequestParam(name = "search",required = false) String search){
 
-        PageinationDTO pageination = questionService.list(page,size);
+        PageinationDTO pageination = questionService.list(search,page,size);
         model.addAttribute("pageination",pageination);
+        model.addAttribute("search",search);
         return "index";
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xyz.coolestme.community.dto.PageinationDTO;
 import xyz.coolestme.community.dto.QuestionDTO;
+import xyz.coolestme.community.dto.QuestionQueryDTO;
 import xyz.coolestme.community.exception.CustomizeErrorCode;
 import xyz.coolestme.community.exception.CustomizeException;
 import xyz.coolestme.community.mapper.QuestionExtMapper;
@@ -32,11 +33,18 @@ public class QuestionService {
     @Autowired
     private QuestionExtMapper questionExtMapper;
 
-    public PageinationDTO list(Integer page, Integer size) {
+    public PageinationDTO list(String search, Integer page, Integer size) {
+
+        if (StringUtils.isNotBlank(search)){
+            String[] tags = StringUtils.split(search," ");
+            search = Arrays.stream(tags).collect(Collectors.joining("|"));
+        }
 
         PageinationDTO pageinationDTO = new PageinationDTO();
 
-        Integer totalCount = (int)questionMapper.countByExample(new QuestionExample());
+        QuestionQueryDTO questionQueryDTO = new QuestionQueryDTO();
+        questionQueryDTO.setSearch(search);
+        Integer totalCount = questionExtMapper.countBySearch(questionQueryDTO);
         pageinationDTO.setPageination(totalCount,page,size);
         if (page < 1){
             page = 1;
@@ -50,7 +58,9 @@ public class QuestionService {
 
         QuestionExample questionExample = new QuestionExample();
         questionExample.setOrderByClause("gmt_create desc");
-        List<Question> questions = questionMapper.selectByExampleWithRowbounds(questionExample,new RowBounds(offset,size));
+        questionQueryDTO.setSize(size);
+        questionQueryDTO.setPage(offset);
+        List<Question> questions = questionExtMapper.selectBySearch(questionQueryDTO);
 
         List<QuestionDTO> questionDTOList = new ArrayList<>();
 
@@ -64,7 +74,7 @@ public class QuestionService {
             questionDTOList.add(questionDTO);
         }
 
-        pageinationDTO.setQuestions(questionDTOList);
+        pageinationDTO.setData(questionDTOList);
 
         return pageinationDTO;
     }
@@ -102,7 +112,7 @@ public class QuestionService {
             questionDTOList.add(questionDTO);
         }
 
-        pageinationDTO.setQuestions(questionDTOList);
+        pageinationDTO.setData(questionDTOList);
 
         return pageinationDTO;
     }
@@ -161,7 +171,8 @@ public class QuestionService {
         question.setTag(regexpTag);
 
         List<Question> questions = questionExtMapper.selectRelated(question);
-        List<QuestionDTO> questionDTOS = questions.stream().map(q->{QuestionDTO questionDTO1 = new QuestionDTO();BeanUtils.copyProperties(q,questionDTO1);return questionDTO1;}).collect(Collectors.toList());
+        List<QuestionDTO> questionDTOS = questions.stream().map(q->{QuestionDTO questionDTO1 = new QuestionDTO();
+        BeanUtils.copyProperties(q,questionDTO1);return questionDTO1;}).collect(Collectors.toList());
         return questionDTOS;
     }
 }

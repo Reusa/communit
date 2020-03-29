@@ -7,6 +7,7 @@ import org.springframework.web.servlet.ModelAndView;
 import xyz.coolestme.community.mapper.UserMapper;
 import xyz.coolestme.community.model.User;
 import xyz.coolestme.community.model.UserExample;
+import xyz.coolestme.community.service.NotificationService;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,9 @@ public class SessionInterceptor implements HandlerInterceptor {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private NotificationService notificationService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -37,6 +41,9 @@ public class SessionInterceptor implements HandlerInterceptor {
                     //System.out.println("get select:" + user.getToken());
                     if (users.size() != 0){
                         request.getSession().setAttribute("user",users.get(0));
+
+                        Long unreadCount = notificationService.unreadCount(users.get(0).getId());
+                        request.getSession().setAttribute("unreadMessage",unreadCount);
                         //System.out.println("interceptor:" + token);
                     }
                 break;
